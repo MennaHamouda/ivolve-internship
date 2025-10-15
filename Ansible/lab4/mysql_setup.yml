@@ -1,0 +1,55 @@
+---
+- name: Install MySQL and setup iVolve database securely
+  hosts: db_servers
+  become: yes
+  vars_files:
+    - vault.yml   # الملف المشفّر اللي فيه الباسوردات
+
+  tasks:
+    - name: Install MySQL server
+      apt:
+        name: mysql-server
+        state: present
+        update_cache: yes
+
+    - name: Ensure MySQL service is running
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: Install Python MySQL modules
+      apt:
+        name:
+          - python3-pymysql
+          - python3-mysqldb
+        state: present
+
+    - name: Create iVolve database
+      community.mysql.mysql_db:
+        name: iVolve
+        state: present
+        login_user: root
+        login_password: "root123"
+
+    - name: Create MySQL user with privileges on iVolve DB
+      community.mysql.mysql_user:
+        name: "{{ db_user }}"
+        password: "{{ db_password }}"
+        priv: 'iVolve.*:ALL'
+        host: "%"
+        state: present
+        login_user: root
+        login_password: "root123"
+
+    - name: Validate database connection by listing all databases
+      community.mysql.mysql_query:
+        login_user: "{{ db_user }}"
+        login_password: "{{ db_password }}"
+        query: "SHOW DATABASES;"
+      register: db_list
+
+    - name: Display databases from managed node
+      debug:
+        msg: "{{ db_list.query_result }}"
+
