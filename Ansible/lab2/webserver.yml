@@ -1,0 +1,38 @@
+---
+- name: Configure Nginx Web Server
+  hosts: webservers
+  become: yes
+
+  tasks:
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+
+    - name: Start and enable Nginx service
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Deploy custom index.html
+      copy:
+        dest: /var/www/html/index.html
+        content: |
+          <html>
+          <head><title>Welcome to Menna's Web Server</title></head>
+          <body style="font-family: Arial; text-align:center; margin-top:50px;">
+            <h1 style="color:green;"> Automated by Ansible</h1>
+            <h2>Hello from {{ ansible_hostname }}!</h2>
+          </body>
+          </html>
+
+    - name: Verify Nginx is running
+      shell: systemctl is-active nginx
+      register: nginx_status
+
+    - name: Show verification result
+      debug:
+        msg: "Nginx is {{ nginx_status.stdout }}"
+
