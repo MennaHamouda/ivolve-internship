@@ -1,0 +1,7 @@
+---
+- name: install packages
+  hosts: all 
+  become: true
+  roles:
+    - role: role/Jenkins   
+    - role: role/Docker
