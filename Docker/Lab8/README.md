@@ -21,25 +21,29 @@ Key files
 - [Next steps](#next-steps)
 
 ## Prerequisites
-- Java 21 JDK (recommended) or a compatible JDK
-- Maven 3.6+ (for building)
-- Docker (optional, for container image build/run)
+- Docker (recommended) — the provided `Dockerfile` builds the project and runs it inside a container.
+- Optional: Java 21 JDK and Maven 3.6+ if you want to build/run locally (not required when using the Dockerfile).
 
-If you don't have Java 21 locally you can still build inside Docker or use an SDK manager (sdkman/apt/homebrew) to install the required JDK.
+This project is Docker-first: the supplied `Dockerfile` runs `mvn package` inside a Maven image, so you don't need Maven or a JDK installed locally to produce and run the application image.
 
-## Build (Maven)
-From the project root run:
+## Build (recommended — using Docker)
+From the project root run (this builds the JAR inside a Maven container and then runs it):
+
+```bash
+# Build the image (the Dockerfile runs `mvn package` during image build)
+docker build -t ilvolve/demo:lab8 .
+
+# Run the container and map port 8080
+docker run --rm -p 8080:8080 ilvolve/demo:lab8
+```
+
+The `Dockerfile` in this repo currently uses the `maven` image as its base, performs `mvn package`, then runs the resulting `target/*.jar`. That means the full build and run lifecycle is handled by Docker.
+
+## Optional: Build & run locally (without Docker)
+If you prefer to build and run locally (for faster iterative development), install a JDK and Maven and then:
 
 ```bash
 mvn -DskipTests package
-```
-
-The built artifact will be placed in `target/` (look for `target/*.jar`).
-
-## Run locally
-Run the packaged JAR:
-
-```bash
 java -jar target/*.jar
 ```
 
