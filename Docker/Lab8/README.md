@@ -1,72 +1,86 @@
-# Docker-1
+docker build -t docker-1:latest .
+docker run -p 8080:8080 --rm docker-1:latest
+# Demo Spring Boot — Docker Lab 8
 
 ![Java 21 Verified](assets/java21-verified.svg)
 
-Simple Spring Boot demo application prepared for Docker. This repository contains a minimal Java application (Spring Boot) with a `Dockerfile` in the project root.
+This repository contains a minimal Spring Boot demo application prepared for Docker (Lab 8).
 
-## What this repo contains
-
+Key files
 - `src/main/java/com/example/demo/DemoApplication.java` — application entrypoint
 - `pom.xml` — Maven build file
 - `Dockerfile` — image build instructions
 
-## Java runtime
+## Table of contents
+- [Prerequisites](#prerequisites)
+- [Build (Maven)](#build-maven)
+- [Run locally](#run-locally)
+- [Build & run with Docker](#build--run-with-docker)
+- [Project structure](#project-structure)
+- [Troubleshooting & notes](#troubleshooting--notes)
+- [Next steps](#next-steps)
 
-This project targets a modern Java runtime. For development and production builds we recommend using the latest LTS: Java 21.
+## Prerequisites
+- Java 21 JDK (recommended) or a compatible JDK
+- Maven 3.6+ (for building)
+- Docker (optional, for container image build/run)
 
-If you need to update the Docker image or local JDK to Java 21, update the base image or install a JDK 21 distribution. Example Dockerfile base line (use an appropriate image tag):
+If you don't have Java 21 locally you can still build inside Docker or use an SDK manager (sdkman/apt/homebrew) to install the required JDK.
 
-```dockerfile
-FROM eclipse-temurin:21-jdk-jammy
-```
-
-Adjust the base image to your preferred vendor (Eclipse Temurin, Adoptium, Amazon Corretto, etc.).
-
-## Build (local)
-
-1. Ensure you have Java 21 JDK installed locally (or a JDK compatible with your target).
-2. Build with Maven:
+## Build (Maven)
+From the project root run:
 
 ```bash
 mvn -DskipTests package
 ```
 
-The packaged JAR will be in `target/`.
+The built artifact will be placed in `target/` (look for `target/*.jar`).
 
-## Build Docker image
-
-From the project root (where `Dockerfile` lives):
-
-```bash
-# build image
-docker build -t docker-1:latest .
-
-# run container (map port if your app listens on 8080)
-docker run -p 8080:8080 --rm docker-1:latest
-```
-
-If your `Dockerfile` uses a runtime image that does not include Java 21, update the `FROM` line as shown above.
-
-## Run (without Docker)
-
-Run the jar locally (replace the jar name if different):
+## Run locally
+Run the packaged JAR:
 
 ```bash
-java -jar target/demo-0.0.1-SNAPSHOT.jar
+java -jar target/*.jar
 ```
 
-## Verify
+By default the application listens on port 8080. Open http://localhost:8080 to verify.
 
-Open http://localhost:8080 (or the port your application uses). Check the application logs for startup messages showing the Java runtime version; you should see Java 21 mentioned if using that runtime.
+## Build & run with Docker
+This project contains a `Dockerfile` at the repository root. Use the following commands from the project root to build and run the container:
 
-### Verification image
+```bash
+# Build the image (tags the image as ilvolve/demo:lab8)
+docker build -t ilvolve/demo:lab8 .
 
-The badge above (`assets/java21-verified.svg`) is a simple verification image added to this README. It is a decorative SVG badge indicating Java 21 (LTS) verification for convenience — replace it with a real screenshot if you prefer.
+# Run the container and map port 8080
+docker run --rm -p 8080:8080 ilvolve/demo:lab8
+```
 
-## Notes & next steps
+Notes:
+- The `Dockerfile` in this repo is intended to produce a small runtime image. If you want an explicit Java 21 base image, update the `FROM` line to a Java 21 vendor image such as `eclipse-temurin:21-jdk-jammy`.
+- If the application binds a different port, adjust `-p HOST:CONTAINER` accordingly.
 
-- If you want, I can update the `Dockerfile` to use an explicit Java 21 base image and run a full build/test cycle.
-- If the project should target a specific Java 21 vendor (Temurin, Corretto, etc.), tell me which and I will update the Dockerfile accordingly.
+## Project structure
+
+```
+.
+├── Dockerfile
+├── pom.xml
+├── src/
+│   └── main/java/com/example/demo/DemoApplication.java
+└── target/  (build output)
+```
+
+## Troubleshooting & tips
+- If `mvn package` fails, run `mvn -X package` to get debug output and ensure your JAVA_HOME points to a compatible JDK.
+- If Docker build fails due to base image/version mismatch, change the base image tag in `Dockerfile` to a supported Java image.
+
+## Next steps (suggestions)
+- Add a small health-check endpoint and a README section with example API calls (curl).
+- Add CI (GitHub Actions) that builds the Maven project and optionally builds/pushes the Docker image.
+
+## License
+This project doesn't include a license file. Add one (for example `LICENSE` with MIT) if you intend to publish or reuse this code.
 
 ---
-Generated README for the Docker-1 project.
+Created/updated README for Docker Lab 8 Spring Boot demo.
