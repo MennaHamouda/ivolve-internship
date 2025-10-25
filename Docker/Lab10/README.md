@@ -1,71 +1,76 @@
-# Docker Lab10 / Docker-1
+# Lab 10: Multi-Stage Docker Build for Node.js Application
 
-Small README for the project in this folder.
+## 📌 Objective
+Containerize a Node.js application using a **multi-stage Docker build**, reducing the final image size by separating the build and runtime environments.
 
-## What this repo contains
-- A simple Java application (Spring Boot starter application) under `src/main/java/com/example/demo`.
-- `pom.xml` (Maven build file).
-- `Dockerfile` to build a container image.
-
-## Prerequisites
-- Java JDK (11+ recommended) installed and on PATH.
-- Maven (mvn) installed for building the project.
-- Docker installed and running to build/run images.
-
-> Note: I assume the application uses the default Spring Boot port 8080. If your application configures a different port, change the examples below accordingly.
-
-## Build with Maven
-From the project root (where `pom.xml` is):
-
+## 📥 Clone the Application Code
 ```bash
-# Build the application (skip tests for a quicker build)
-mvn clean package -DskipTests
+git clone https://github.com/Ibrahim-Adel15/Docker-1.git
+cd Docker-1/App3
 ```
 
-After a successful build the runnable jar will be in `target/` (e.g. `target/*.jar`).
+## 🐳 Dockerfile (Multi-Stage Build)
 
-## Run the app locally (jar)
+### ✅ Requirements
+- Use **Maven base image** for the build stage
+- Copy the source code into the container
+- Build the application using `mvn package`
+- Use a lightweight **Java base image** for the runtime stage
+- Copy only the final JAR to keep image size minimal
+- Expose port **8080**
+- Run the JAR file
 
-```bash
-# Run the built jar
-java -jar target/*.jar
+> (Place this Dockerfile inside the App3 folder)
+
+```dockerfile
+# ---------- Stage 1: Build ----------
+FROM maven:3.9.6-eclipse-temurin-17 AS builder
+WORKDIR /app
+
+COPY . .
+RUN mvn clean package -DskipTests
+
+# ---------- Stage 2: Runtime ----------
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+
+COPY --from=builder /app/target/demo-0.0.1-SNAPSHOT.jar app.jar
+
+EXPOSE 8080
+CMD ["java", "-jar", "app.jar"]
 ```
 
-The app should start on port 8080 by default.
-
-## Build and run with Docker
-From the project root (where `Dockerfile` is):
-
+## 🏗️ Build Docker Image
 ```bash
-# Build the Docker image (tag it appropriately)
-docker build -t docker-1:latest .
-
-# Run the container, mapping port 8080
-docker run --rm -p 8080:8080 docker-1:latest
+docker build -t app3-multi-stage .
 ```
 
-Adjust `-p hostPort:containerPort` if your app uses a different port.
-
-## Useful Maven Docker alternative (optional)
-If you prefer a container image built by Spring Boot plugin (requires plugin configured in `pom.xml`):
-
+✅ Compare image size with a single-stage build:
 ```bash
-mvn spring-boot:build-image -DskipTests
+docker images | grep app3
 ```
 
-## Troubleshooting
-- "Port already in use": stop the process using that port or change mapping (e.g. `-p 9090:8080`).
-- Docker permission errors: ensure your user can run Docker or use `sudo` where required.
-- Build failures: run `mvn clean package` and inspect the output; fix compile/test errors if any.
+## ▶️ Run the Container
+```bash
+docker run -d -p 8080:8080 --name app3-container app3-multi-stage
+```
 
-## Files changed / created
-- `README.md` — added (this file).
+## ✅ Test the Application
+Open browser or use curl:
+```
+http://localhost:8080
+```
 
-## Assumptions
-- App uses Spring Boot and listens on 8080.
-- Standard Maven project layout.
+## ⛔ Stop and Remove Container
+```bash
+docker stop app3-container
+docker rm app3-container
+```
 
-If you'd like, I can:
-- Add more details (project description, endpoints) by reading the source.
-- Add a Docker image name/tag and CI examples.
+## ✅ Expected Output
+- Application successfully builds and runs in a smaller Java runtime image
+- Application responds on port **8080** when tested
 
+## 📎 Notes
+- Multi-stage builds significantly **reduce image size** by eliminating build dependencies from the final runtime image.
+- Always verify the artifact name inside `target/` before copying it in the runtime stage.
