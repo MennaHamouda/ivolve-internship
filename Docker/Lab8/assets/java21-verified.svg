@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="260" height="64" viewBox="0 0 260 64" role="img" aria-label="Java 21 Verified">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1">
+      <stop offset="0" stop-color="#0b6d3a"/>
+      <stop offset="1" stop-color="#2fbf71"/>
+    </linearGradient>
+  </defs>
+  <rect rx="6" width="260" height="64" fill="#0f1720"/>
+  <rect x="8" y="8" rx="4" width="240" height="48" fill="url(#g)" opacity="0.98"/>
+  <g font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="14" fill="#fff" text-anchor="start">
+    <text x="20" y="32" font-weight="700">Java 21</text>
+    <text x="20" y="48" font-size="12" opacity="0.95">LTS • Verified</text>
+  </g>
+  <g transform="translate(190,12)">
+    <circle cx="30" cy="20" r="14" fill="#fff"/>
+    <path d="M24 20l4 4 8-8" stroke="#2fbf71" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <title>Java 21 Verified</title>
+</svg>
