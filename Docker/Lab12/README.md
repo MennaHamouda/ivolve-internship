@@ -75,5 +75,3 @@ docker volume rm nginx_logs
 
 ---
 
-## 📌 Author
-Menna Hamouda — Docker Labs
