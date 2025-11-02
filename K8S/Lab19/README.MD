@@ -130,7 +130,7 @@ spec:
 
 ---
 
-### 🚀 **Step 5 — Apply All Files**
+### **Step 5 — Apply All Files**
 
 ```bash
 
@@ -145,7 +145,7 @@ kubectl apply -f mysql-headless-svc.yaml
 
 ---
 
-### 🔍 **Step 6 — Verify Deployment**
+###  **Step 6 — Verify Deployment**
 
 ```bash
 kubectl get statefulsets
@@ -159,7 +159,7 @@ kubectl get pv
 
 ---
 
-### 🧠 **Step 7 — Connect to MySQL**
+### **Step 7 — Connect to MySQL**
 
 Access the pod shell:
 
