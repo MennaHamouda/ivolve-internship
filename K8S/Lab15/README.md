@@ -1,6 +1,6 @@
 # Lab 15: Node Isolation Using Taints in Kubernetes
 
-## 🎯 Objective
+##  Objective
 The goal of this lab is to isolate a specific node in a Kubernetes cluster using **Taints**, ensuring that only pods with the appropriate **Tolerations** can be scheduled on that node.
 
 ---
@@ -11,7 +11,7 @@ The goal of this lab is to isolate a specific node in a Kubernetes cluster using
 
 ---
 
-## 🪜 Steps
+## Steps
 
 ### 1️⃣ List all nodes in the cluster
 ```bash
